@@ -14,9 +14,11 @@ buildscript {
 dependencies {
 
 	implementation project(":remote-config")
+	implementation(Libs.ANDROIDX_PREFERENCE)
+	implementation(Libs.FIREBASE_CRASHLYTICS)
 	implementation(Libs.FIREBASE_MESSAGING)
 	implementation(Libs.FIREBASE_REMOTE_CONFIG)
-	implementation(Libs.ANDROIDX_PREFERENCE)
+	implementation(Libs.WORK_MANAGER_RUNTIME_KTX)
 
 	testImplementation(Libs.JUNIT)
 	testImplementation(Libs.TRUTH)

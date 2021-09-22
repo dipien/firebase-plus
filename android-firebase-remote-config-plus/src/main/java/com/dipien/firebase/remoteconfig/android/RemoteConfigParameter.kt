@@ -1,4 +1,4 @@
-package com.dipien.remoteconfig
+package com.dipien.firebase.remoteconfig.android
 
 interface RemoteConfigParameter {
 

@@ -6,16 +6,23 @@ import android.content.SharedPreferences
 import android.content.pm.ApplicationInfo
 import android.util.Log
 import androidx.preference.PreferenceManager
-import com.dipien.remoteconfig.RemoteConfigLoader
-import com.dipien.remoteconfig.RemoteConfigParameter
+import androidx.work.ListenableWorker
+import com.google.android.gms.tasks.Tasks
+import com.google.firebase.crashlytics.CustomKeysAndValues
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigClientException
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigValue
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
+import java.io.IOException
+import java.util.concurrent.ExecutionException
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeoutException
 
-abstract class FirebaseRemoteConfigLoader(private val applicationContext: Context) : RemoteConfigLoader {
+abstract class FirebaseRemoteConfigLoader(private val applicationContext: Context) {
 
     companion object {
         private val TAG = FirebaseRemoteConfigLoader::class.simpleName
@@ -65,11 +72,46 @@ abstract class FirebaseRemoteConfigLoader(private val applicationContext: Contex
         }
     }
 
-    override fun fetch() {
-        TODO("Not yet implemented")
+    @SuppressLint("LogCall")
+    fun fetchAndActivate(applicationContext: Context): ListenableWorker.Result {
+        try {
+            // Block on the task for a maximum of 30 seconds, otherwise time out.
+            val task = remoteConfig.fetchAndActivate()
+            val configParamsUpdated = Tasks.await(task, 30, TimeUnit.SECONDS)
+            Log.i(TAG,"Remote config fetch. Config params updated: $configParamsUpdated")
+            val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+            sharedPreferences.edit().putBoolean(REMOTE_CONFIG_STALE_STATUS_PREF_KEY, false).apply()
+
+            // Send remote config values as crashlytics custom keys
+            val builder = CustomKeysAndValues.Builder()
+            getRemoteConfigParameters().forEach {
+                builder.putString("rc_${it.getKey()}", getString(it))
+            }
+            FirebaseCrashlytics.getInstance().setCustomKeys(builder.build())
+
+            return ListenableWorker.Result.success()
+        } catch (e: ExecutionException) {
+            // The Task failed, this is the same exception you'd get in a non-blocking failure handler.
+            return if (e.cause is FirebaseRemoteConfigClientException && e.cause?.cause is IOException) {
+                Log.d(TAG, "IOException when fetching remote config", e)
+                ListenableWorker.Result.retry()
+            } else {
+                Log.e(TAG, e.message, e.cause ?: e)
+                FirebaseCrashlytics.getInstance().recordException(e.cause ?: e)
+                ListenableWorker.Result.failure()
+            }
+        } catch (e: InterruptedException) {
+            // An interrupt occurred while waiting for the task to complete.
+            Log.e(TAG, e.message, e)
+            return ListenableWorker.Result.retry()
+        } catch (e: TimeoutException) {
+            // Task timed out before it could complete.
+            Log.e(TAG, e.message, e)
+            return ListenableWorker.Result.retry()
+        }
     }
 
-    override fun getString(remoteConfigParameter: RemoteConfigParameter): String {
+    fun getString(remoteConfigParameter: RemoteConfigParameter): String {
         val firebaseRemoteConfigValue = getValue(remoteConfigParameter)
         if (firebaseRemoteConfigValue.source == FirebaseRemoteConfig.VALUE_SOURCE_STATIC) {
             return remoteConfigParameter.getDefaultValue().toString()
@@ -77,11 +119,11 @@ abstract class FirebaseRemoteConfigLoader(private val applicationContext: Contex
         return firebaseRemoteConfigValue.asString()
     }
 
-    override fun getStringList(remoteConfigParameter: RemoteConfigParameter): List<String> {
+    fun getStringList(remoteConfigParameter: RemoteConfigParameter): List<String> {
         return getString(remoteConfigParameter).split(STRING_LIST_SEPARATOR)
     }
 
-    override fun getBoolean(remoteConfigParameter: RemoteConfigParameter): Boolean {
+    fun getBoolean(remoteConfigParameter: RemoteConfigParameter): Boolean {
         val firebaseRemoteConfigValue = getValue(remoteConfigParameter)
         if (firebaseRemoteConfigValue.source == FirebaseRemoteConfig.VALUE_SOURCE_STATIC) {
             return remoteConfigParameter.getDefaultValue().toString().toBoolean()
@@ -89,7 +131,7 @@ abstract class FirebaseRemoteConfigLoader(private val applicationContext: Contex
         return firebaseRemoteConfigValue.asBoolean()
     }
 
-    override fun getLong(remoteConfigParameter: RemoteConfigParameter): Long {
+    fun getLong(remoteConfigParameter: RemoteConfigParameter): Long {
         val firebaseRemoteConfigValue = getValue(remoteConfigParameter)
         if (firebaseRemoteConfigValue.source == FirebaseRemoteConfig.VALUE_SOURCE_STATIC) {
             return remoteConfigParameter.getDefaultValue().toString().toLong()
@@ -97,13 +139,15 @@ abstract class FirebaseRemoteConfigLoader(private val applicationContext: Contex
         return firebaseRemoteConfigValue.asLong()
     }
 
-    override fun getDouble(remoteConfigParameter: RemoteConfigParameter): Double {
+    fun getDouble(remoteConfigParameter: RemoteConfigParameter): Double {
         val firebaseRemoteConfigValue = getValue(remoteConfigParameter)
         if (firebaseRemoteConfigValue.source == FirebaseRemoteConfig.VALUE_SOURCE_STATIC) {
             return remoteConfigParameter.getDefaultValue().toString().toDouble()
         }
         return firebaseRemoteConfigValue.asDouble()
     }
+
+    abstract fun getRemoteConfigParameters(): List<RemoteConfigParameter>
 
     @SuppressLint("LogCall")
     private fun getValue(parameter: RemoteConfigParameter): FirebaseRemoteConfigValue {

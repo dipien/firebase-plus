@@ -27,7 +27,7 @@ executors:
   jdk_executor:
     working_directory: *working_dir
     docker:
-      - image: cimg/openjdk:11.0
+      - image: circleci/android:api-30
         auth:
           username: $DOCKERHUB_USER
           password: $DOCKERHUB_PASSWORD

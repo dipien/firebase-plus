@@ -15,6 +15,4 @@ interface RemoteConfigLoader {
     fun getDouble(remoteConfigParameter: RemoteConfigParameter): Double
 
     fun getRemoteConfigParameters(): List<RemoteConfigParameter>
-
-    fun getStringListSeparator(): String
 }

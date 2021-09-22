@@ -14,7 +14,9 @@ buildscript {
 dependencies {
 
 	implementation project(":remote-config")
+	implementation(Libs.FIREBASE_MESSAGING)
 	implementation(Libs.FIREBASE_REMOTE_CONFIG)
+	implementation(Libs.ANDROIDX_PREFERENCE)
 
 	testImplementation(Libs.JUNIT)
 	testImplementation(Libs.TRUTH)

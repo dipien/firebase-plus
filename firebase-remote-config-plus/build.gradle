@@ -1,0 +1,16 @@
+ext.PROJECT_NAME = "Firebase Remote Config Plus"
+description = "Firebase Remote Config"
+ext.ARTIFACT_ID = "firebase-remote-config-plus"
+
+apply plugin: "com.jdroidtools.java.library"
+
+buildscript {
+	dependencies {
+		classpath(BuildLibs.JDROID_GRADLE_JAVA_PLUGIN)
+	}
+}
+
+dependencies {
+	testImplementation(Libs.JUNIT)
+	testImplementation(Libs.TRUTH)
+}

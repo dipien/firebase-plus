@@ -1,7 +1,6 @@
 [![Dipien](https://raw.githubusercontent.com/dipien/dipien-component-builder/master/.github/dipien_logo.png)](http://www.dipien.com)
 
-# Dipien Public Repo Template
-Template for Dipien public Github repositories
+# Firebase Remote Config Plus
 
 ## Sponsor this project
 

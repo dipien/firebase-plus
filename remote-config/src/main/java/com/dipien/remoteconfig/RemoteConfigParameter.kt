@@ -4,5 +4,5 @@ interface RemoteConfigParameter {
 
     fun getKey(): String
 
-    fun getDefaultValue(): Any?
+    fun getDefaultValue(): Any
 }

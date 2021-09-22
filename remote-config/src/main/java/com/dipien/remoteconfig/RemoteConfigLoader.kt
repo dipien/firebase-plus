@@ -4,17 +4,17 @@ interface RemoteConfigLoader {
 
     fun fetch()
 
-    fun getObject(remoteConfigParameter: RemoteConfigParameter): Any?
+    fun getString(remoteConfigParameter: RemoteConfigParameter): String
 
-    fun getString(remoteConfigParameter: RemoteConfigParameter): String?
+    fun getStringList(remoteConfigParameter: RemoteConfigParameter): List<String>
 
-    fun getStringList(remoteConfigParameter: RemoteConfigParameter): List<String>?
+    fun getBoolean(remoteConfigParameter: RemoteConfigParameter): Boolean
 
-    fun getBoolean(remoteConfigParameter: RemoteConfigParameter): Boolean?
+    fun getLong(remoteConfigParameter: RemoteConfigParameter): Long
 
-    fun getLong(remoteConfigParameter: RemoteConfigParameter): Long?
-
-    fun getDouble(remoteConfigParameter: RemoteConfigParameter): Double?
+    fun getDouble(remoteConfigParameter: RemoteConfigParameter): Double
 
     fun getRemoteConfigParameters(): List<RemoteConfigParameter>
+
+    fun getStringListSeparator(): String
 }

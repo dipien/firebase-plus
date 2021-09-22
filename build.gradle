@@ -1,0 +1,48 @@
+version = "1.0.0"
+
+ext.GITHUB_REPOSITORY_NAME = "template-plugin"
+
+apply plugin: "com.dipien.component.builder"
+apply plugin: "com.jdroidtools.root"
+apply plugin: "com.dipien.release"
+
+buildscript {
+	repositories {
+		def propertyResolver = new PropertyResolver(project)
+		mavenCentral()
+		if (propertyResolver.getRequiredBooleanProp("LOCAL_MAVEN_REPO_ENABLED", false)) {
+			maven { url = propertyResolver.getRequiredStringProp("LOCAL_MAVEN_REPO") }
+		}
+		maven { url = "https://oss.sonatype.org/content/repositories/snapshots/" }
+		gradlePluginPortal()
+	}
+
+	dependencies {
+		classpath(BuildLibs.DIPIEN_COMPONENT_BUILDER)
+		classpath(BuildLibs.JDROID_GRADLE_ROOT_PLUGIN)
+		classpath(BuildLibs.RELEASE_GRADLE_PLUGIN)
+	}
+}
+
+def propertyResolver = new PropertyResolver(project)
+
+allprojects {
+	buildscript {
+		repositories {
+			mavenCentral()
+			if (propertyResolver.getRequiredBooleanProp("LOCAL_MAVEN_REPO_ENABLED", false)) {
+				maven { url = propertyResolver.getRequiredStringProp("LOCAL_MAVEN_REPO") }
+			}
+			maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+			gradlePluginPortal()
+		}
+	}
+
+	repositories {
+		mavenCentral()
+		if (propertyResolver.getRequiredBooleanProp("LOCAL_MAVEN_REPO_ENABLED", false)) {
+			maven { url = propertyResolver.getRequiredStringProp("LOCAL_MAVEN_REPO") }
+		}
+		maven { url = "https://oss.sonatype.org/content/repositories/snapshots/" }
+	}
+}

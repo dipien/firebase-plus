@@ -1,0 +1,18 @@
+# Gradle
+.gradle
+build/
+gradle-local.properties
+out/
+
+# IntelliJ
+*.iml
+/captures
+.idea/caches
+.idea/*.xml
+.idea/libraries
+.idea/markdown-navigator
+.idea/copyright
+.idea/modules
+
+# Android Studio
+/local.properties

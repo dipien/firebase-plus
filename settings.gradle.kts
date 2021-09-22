@@ -10,4 +10,4 @@ if (System.getenv("CI") == "true") {
     }
 }
 
-include(":firebase-remote-config-plus")
+include(":android-firebase-remote-config-plus")

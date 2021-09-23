@@ -1,0 +1,30 @@
+import com.dipien.sample.Libs
+
+apply plugin: "com.android.application"
+apply plugin: "kotlin-android"
+
+android {
+	compileSdkVersion = 30
+	buildToolsVersion = "30.0.3"
+
+	defaultConfig {
+		applicationId "com.dipien.sample"
+		minSdkVersion 23
+		targetSdkVersion 30
+		versionCode 1
+		versionName "1.0"
+	}
+
+	compileOptions {
+		sourceCompatibility JavaVersion.VERSION_1_8
+		targetCompatibility JavaVersion.VERSION_1_8
+	}
+	kotlinOptions {
+		jvmTarget = '1.8'
+	}
+}
+
+dependencies {
+	implementation(Libs.KOTLIN)
+	implementation(Libs.APPCOMPAT)
+}

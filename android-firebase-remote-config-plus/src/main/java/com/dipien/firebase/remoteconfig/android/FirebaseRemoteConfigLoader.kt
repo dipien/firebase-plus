@@ -12,6 +12,7 @@ import com.google.firebase.crashlytics.CustomKeysAndValues
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.messaging.RemoteMessage
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigClientException
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigValue
@@ -30,6 +31,9 @@ abstract class FirebaseRemoteConfigLoader(private val applicationContext: Contex
         const val REMOTE_CONFIG_STALE_STATUS_PREF_KEY = "remote_config_stale"
         private const val REMOTE_CONFIG_PUSH_TOPIC = "REMOTE_CONFIG_PUSH"
         private const val REMOTE_CONFIG_PUSH_TOPIC_SUBSCRIBED_PREF_KEY = "remote_config_push_topic_subscribed"
+
+        private const val REMOTE_MESSAGE_STALE_KEY = "REMOTE_CONFIG_STATUS"
+        private const val REMOTE_MESSAGE_STALE_VALUE = "STALE"
     }
 
     private val remoteConfig: FirebaseRemoteConfig by lazy {
@@ -56,10 +60,12 @@ abstract class FirebaseRemoteConfigLoader(private val applicationContext: Contex
     }
 
     @SuppressLint("LogCall")
-    fun flagAsStale() {
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-        sharedPreferences.edit().putBoolean(REMOTE_CONFIG_STALE_STATUS_PREF_KEY, true).apply()
-        Log.d(TAG, "Remote config changed to stale status")
+    fun flagAsStale(message: RemoteMessage) {
+        if (message.data[REMOTE_MESSAGE_STALE_KEY] == REMOTE_MESSAGE_STALE_VALUE) {
+            val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+            sharedPreferences.edit().putBoolean(REMOTE_CONFIG_STALE_STATUS_PREF_KEY, true).apply()
+            Log.d(TAG, "Remote config changed to stale status")
+        }
     }
 
     @SuppressLint("LogCall")

@@ -41,7 +41,7 @@ class RemoteConfigFetcherWorker constructor(
 
     @SuppressLint("LogCall")
     override fun doWork(): Result {
-        Log.d(TAG,  "Executing worker")
+        Log.d(TAG, "Executing worker")
         return try {
             firebaseRemoteConfigLoader.fetchAndActivate(appContext)
         } catch (e: Throwable) {

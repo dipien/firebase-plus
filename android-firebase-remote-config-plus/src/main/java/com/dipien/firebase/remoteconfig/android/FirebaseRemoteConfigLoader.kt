@@ -78,7 +78,7 @@ abstract class FirebaseRemoteConfigLoader(private val applicationContext: Contex
             // Block on the task for a maximum of 30 seconds, otherwise time out.
             val task = remoteConfig.fetchAndActivate()
             val configParamsUpdated = Tasks.await(task, 30, TimeUnit.SECONDS)
-            Log.i(TAG,"Remote config fetch. Config params updated: $configParamsUpdated")
+            Log.i(TAG, "Remote config fetch. Config params updated: $configParamsUpdated")
             val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
             sharedPreferences.edit().putBoolean(REMOTE_CONFIG_STALE_STATUS_PREF_KEY, false).apply()
 

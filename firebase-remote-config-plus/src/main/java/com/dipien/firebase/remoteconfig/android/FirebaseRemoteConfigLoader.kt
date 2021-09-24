@@ -24,7 +24,8 @@ import java.util.concurrent.TimeoutException
 
 abstract class FirebaseRemoteConfigLoader(
     private val applicationContext: Context,
-    private val remoteConfigParameters: List<RemoteConfigParameter>) {
+    private val remoteConfigParameters: List<RemoteConfigParameter>
+) {
 
     companion object {
 

@@ -1,6 +1,5 @@
 package com.dipien.firebase.remoteconfig.android
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import androidx.work.Constraints
@@ -39,7 +38,6 @@ class RemoteConfigFetcherWorker constructor(
         }
     }
 
-    @SuppressLint("LogCall")
     override fun doWork(): Result {
         Log.d(TAG, "Executing worker")
         return try {

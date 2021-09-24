@@ -1,6 +1,5 @@
 package com.dipien.firebase.remoteconfig.android
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.pm.ApplicationInfo
@@ -23,17 +22,23 @@ import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 
-abstract class FirebaseRemoteConfigLoader(private val applicationContext: Context) {
+abstract class FirebaseRemoteConfigLoader(
+    private val applicationContext: Context,
+    private val remoteConfigParameters: List<RemoteConfigParameter>) {
 
     companion object {
+
         private val TAG = FirebaseRemoteConfigLoader::class.simpleName
+
         private const val STRING_LIST_SEPARATOR = ","
-        const val REMOTE_CONFIG_STALE_STATUS_PREF_KEY = "remote_config_stale"
+
+        private const val REMOTE_CONFIG_STALE_STATUS_PREF_KEY = "remote_config_stale"
         private const val REMOTE_CONFIG_PUSH_TOPIC = "REMOTE_CONFIG_PUSH"
         private const val REMOTE_CONFIG_PUSH_TOPIC_SUBSCRIBED_PREF_KEY = "remote_config_push_topic_subscribed"
-
         private const val REMOTE_MESSAGE_STALE_KEY = "REMOTE_CONFIG_STATUS"
         private const val REMOTE_MESSAGE_STALE_VALUE = "STALE"
+
+        private const val CRASHLYTICS_CUSTOM_KEY_PREFIX = "rc_"
     }
 
     private val remoteConfig: FirebaseRemoteConfig by lazy {
@@ -47,7 +52,7 @@ abstract class FirebaseRemoteConfigLoader(private val applicationContext: Contex
             })
 
             val defaults = mutableMapOf<String, Any>()
-            getRemoteConfigParameters().forEach {
+            remoteConfigParameters.forEach {
                 defaults[it.getKey()] = it.getDefaultValue()
             }
             setDefaultsAsync(defaults)
@@ -59,7 +64,6 @@ abstract class FirebaseRemoteConfigLoader(private val applicationContext: Contex
         return flags and ApplicationInfo.FLAG_DEBUGGABLE != 0
     }
 
-    @SuppressLint("LogCall")
     fun flagAsStale(message: RemoteMessage) {
         if (message.data[REMOTE_MESSAGE_STALE_KEY] == REMOTE_MESSAGE_STALE_VALUE) {
             val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
@@ -68,7 +72,6 @@ abstract class FirebaseRemoteConfigLoader(private val applicationContext: Contex
         }
     }
 
-    @SuppressLint("LogCall")
     fun subscribeToRemoteConfigTopic(force: Boolean) {
         val sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
         if (force || !sharedPreferences.getBoolean(REMOTE_CONFIG_PUSH_TOPIC_SUBSCRIBED_PREF_KEY, false)) {
@@ -78,7 +81,6 @@ abstract class FirebaseRemoteConfigLoader(private val applicationContext: Contex
         }
     }
 
-    @SuppressLint("LogCall")
     fun fetchAndActivate(applicationContext: Context): ListenableWorker.Result {
         try {
             // Block on the task for a maximum of 30 seconds, otherwise time out.
@@ -90,8 +92,8 @@ abstract class FirebaseRemoteConfigLoader(private val applicationContext: Contex
 
             // Send remote config values as crashlytics custom keys
             val builder = CustomKeysAndValues.Builder()
-            getRemoteConfigParameters().forEach {
-                builder.putString("rc_${it.getKey()}", getString(it))
+            remoteConfigParameters.filter { it.trackAsCrashlyticsCustomKey() }.forEach {
+                builder.putString("${CRASHLYTICS_CUSTOM_KEY_PREFIX}${it.getKey()}", getString(it))
             }
             FirebaseCrashlytics.getInstance().setCustomKeys(builder.build())
 
@@ -153,9 +155,6 @@ abstract class FirebaseRemoteConfigLoader(private val applicationContext: Contex
         return firebaseRemoteConfigValue.asDouble()
     }
 
-    abstract fun getRemoteConfigParameters(): List<RemoteConfigParameter>
-
-    @SuppressLint("LogCall")
     private fun getValue(parameter: RemoteConfigParameter): FirebaseRemoteConfigValue {
         val configValue = remoteConfig.getValue(parameter.getKey())
         Log.i(TAG, "Loaded Firebase Remote Config Parameter. Key [${parameter.getKey()}] | Value [${configValue.asString()}] | Source [${configValue.source}]")

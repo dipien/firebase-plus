@@ -17,6 +17,7 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfigClientException
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigValue
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
+import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.IOException
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
@@ -26,7 +27,7 @@ import javax.inject.Singleton
 
 @Singleton
 open class FirebaseRemoteConfigLoader @Inject constructor(
-    private val applicationContext: Context,
+    @ApplicationContext private val applicationContext: Context,
     private val remoteConfigParameters: Set<@JvmSuppressWildcards RemoteConfigParameter>
 ) : RemoteConfigLoader {
 

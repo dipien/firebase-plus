@@ -1,7 +1,6 @@
 package com.dipien.sample
 
 import com.dipien.firebase.remoteconfig.RemoteConfigParameter
-import java.util.Locale
 
 enum class SampleRemoteConfigParameter constructor(private val defaultValue: Any) : RemoteConfigParameter {
 
@@ -9,7 +8,7 @@ enum class SampleRemoteConfigParameter constructor(private val defaultValue: Any
     LONG_PARAM(1L);
 
     override fun getKey(): String {
-        return name.toLowerCase(Locale.US)
+        return name.lowercase()
     }
 
     override fun getDefaultValue(): Any {

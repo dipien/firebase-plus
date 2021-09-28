@@ -1,19 +1,37 @@
+import com.dipien.sample.BuildLibs
 import com.dipien.sample.Libs
 
 apply plugin: "com.android.application"
 apply plugin: "kotlin-android"
 apply plugin: "kotlin-kapt"
+apply plugin: "com.google.gms.google-services"
+apply plugin: "com.google.firebase.crashlytics"
+apply plugin: "dagger.hilt.android.plugin"
+
+buildscript {
+	dependencies {
+		classpath(BuildLibs.GOOGLE_SERVICES_PLUGIN)
+		classpath(BuildLibs.FIREBASE_CRASHLYTICS_GRADLE_PLUGIN)
+		classpath(BuildLibs.HILT_GRADLE_PLUGIN)
+	}
+}
 
 android {
 	compileSdkVersion = 30
 	buildToolsVersion = "30.0.3"
 
 	defaultConfig {
-		applicationId "com.dipien.sample"
+		applicationId "com.dipien.firebaseplus.sample"
 		minSdkVersion 23
 		targetSdkVersion 30
 		versionCode 1
 		versionName "1.0"
+	}
+
+	signingConfigs {
+		debug {
+			storeFile(file("keystores/debug.keystore"))
+		}
 	}
 
 	compileOptions {
@@ -29,6 +47,10 @@ dependencies {
 	implementation(Libs.FIREBASE_PLUS_REMOTE_CONFIG)
 	implementation(Libs.FIREBASE_PLUS_MESSAGING)
 	implementation(Libs.HILT_ANDROID_WORKMANAGER)
+	kapt(Libs.DAGGER_ANDROID_PROCESSOR)
+	kapt(Libs.DAGGER_COMPILER)
+	implementation(Libs.HILT_ANDROID)
+	kapt(Libs.HILT_ANDROID_COMPILER)
 	kapt(Libs.HILT_ANDROID_WORKMANAGER_COMPILER)
 	implementation(Libs.KOTLIN)
 	implementation(Libs.APPCOMPAT)

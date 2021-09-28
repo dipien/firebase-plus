@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "97905469356",
+    "project_id": "dipien-firebase-plus",
+    "storage_bucket": "dipien-firebase-plus.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:97905469356:android:de17c31916f284a3d6fc09",
+        "android_client_info": {
+          "package_name": "com.dipien.firebaseplus.sample"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "97905469356-bku83lacs5c24i2nntu9vkkfubh9qlvn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBl5VjalW2FCRWNjDiSxxseSryooYwTcGM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "97905469356-bku83lacs5c24i2nntu9vkkfubh9qlvn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

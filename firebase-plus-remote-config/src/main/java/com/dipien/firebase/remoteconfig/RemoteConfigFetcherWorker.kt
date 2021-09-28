@@ -19,7 +19,7 @@ import java.io.IOException
 class RemoteConfigFetcherWorker @AssistedInject constructor(
     @Assisted appContext: Context,
     @Assisted workerParams: WorkerParameters,
-    val remoteConfigLoader: RemoteConfigLoader
+    private val remoteConfigLoader: RemoteConfigLoader
 ) : Worker(appContext, workerParams) {
 
     companion object {

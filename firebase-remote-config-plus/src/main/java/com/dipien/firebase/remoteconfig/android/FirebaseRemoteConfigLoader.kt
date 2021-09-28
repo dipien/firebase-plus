@@ -22,10 +22,10 @@ import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 
-abstract class FirebaseRemoteConfigLoader(
+open class FirebaseRemoteConfigLoader(
     private val applicationContext: Context,
-    private val remoteConfigParameters: List<RemoteConfigParameter>
-) {
+    private val remoteConfigParameters: Set<@JvmSuppressWildcards RemoteConfigParameter>
+): RemoteConfigLoader {
 
     companion object {
 
@@ -65,7 +65,7 @@ abstract class FirebaseRemoteConfigLoader(
         return flags and ApplicationInfo.FLAG_DEBUGGABLE != 0
     }
 
-    fun flagAsStale(message: RemoteMessage) {
+    override fun flagAsStale(message: RemoteMessage) {
         if (message.data[REMOTE_MESSAGE_STALE_KEY] == REMOTE_MESSAGE_STALE_VALUE) {
             val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
             sharedPreferences.edit().putBoolean(REMOTE_CONFIG_STALE_STATUS_PREF_KEY, true).apply()
@@ -73,7 +73,7 @@ abstract class FirebaseRemoteConfigLoader(
         }
     }
 
-    fun subscribeToRemoteConfigTopic(force: Boolean) {
+    override fun subscribeToRemoteConfigTopic(force: Boolean) {
         val sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
         if (force || !sharedPreferences.getBoolean(REMOTE_CONFIG_PUSH_TOPIC_SUBSCRIBED_PREF_KEY, false)) {
             Log.i(TAG, "Subscribing to $REMOTE_CONFIG_PUSH_TOPIC FCM topic")
@@ -82,7 +82,7 @@ abstract class FirebaseRemoteConfigLoader(
         }
     }
 
-    fun fetchAndActivate(applicationContext: Context): ListenableWorker.Result {
+    override fun fetchAndActivate(applicationContext: Context): ListenableWorker.Result {
         try {
             // Block on the task for a maximum of 30 seconds, otherwise time out.
             val task = remoteConfig.fetchAndActivate()
@@ -112,6 +112,7 @@ abstract class FirebaseRemoteConfigLoader(
         } catch (e: InterruptedException) {
             // An interrupt occurred while waiting for the task to complete.
             Log.e(TAG, e.message, e)
+            FirebaseCrashlytics.getInstance().recordException(e)
             return ListenableWorker.Result.retry()
         } catch (e: TimeoutException) {
             // Task timed out before it could complete.
@@ -120,7 +121,7 @@ abstract class FirebaseRemoteConfigLoader(
         }
     }
 
-    fun getString(remoteConfigParameter: RemoteConfigParameter): String {
+    override fun getString(remoteConfigParameter: RemoteConfigParameter): String {
         val firebaseRemoteConfigValue = getValue(remoteConfigParameter)
         if (firebaseRemoteConfigValue.source == FirebaseRemoteConfig.VALUE_SOURCE_STATIC) {
             return remoteConfigParameter.getDefaultValue().toString()
@@ -128,11 +129,11 @@ abstract class FirebaseRemoteConfigLoader(
         return firebaseRemoteConfigValue.asString()
     }
 
-    fun getStringList(remoteConfigParameter: RemoteConfigParameter): List<String> {
+    override fun getStringList(remoteConfigParameter: RemoteConfigParameter): List<String> {
         return getString(remoteConfigParameter).split(STRING_LIST_SEPARATOR)
     }
 
-    fun getBoolean(remoteConfigParameter: RemoteConfigParameter): Boolean {
+    override fun getBoolean(remoteConfigParameter: RemoteConfigParameter): Boolean {
         val firebaseRemoteConfigValue = getValue(remoteConfigParameter)
         if (firebaseRemoteConfigValue.source == FirebaseRemoteConfig.VALUE_SOURCE_STATIC) {
             return remoteConfigParameter.getDefaultValue().toString().toBoolean()
@@ -140,7 +141,7 @@ abstract class FirebaseRemoteConfigLoader(
         return firebaseRemoteConfigValue.asBoolean()
     }
 
-    fun getLong(remoteConfigParameter: RemoteConfigParameter): Long {
+    override fun getLong(remoteConfigParameter: RemoteConfigParameter): Long {
         val firebaseRemoteConfigValue = getValue(remoteConfigParameter)
         if (firebaseRemoteConfigValue.source == FirebaseRemoteConfig.VALUE_SOURCE_STATIC) {
             return remoteConfigParameter.getDefaultValue().toString().toLong()
@@ -148,7 +149,7 @@ abstract class FirebaseRemoteConfigLoader(
         return firebaseRemoteConfigValue.asLong()
     }
 
-    fun getDouble(remoteConfigParameter: RemoteConfigParameter): Double {
+    override fun getDouble(remoteConfigParameter: RemoteConfigParameter): Double {
         val firebaseRemoteConfigValue = getValue(remoteConfigParameter)
         if (firebaseRemoteConfigValue.source == FirebaseRemoteConfig.VALUE_SOURCE_STATIC) {
             return remoteConfigParameter.getDefaultValue().toString().toDouble()
@@ -158,7 +159,9 @@ abstract class FirebaseRemoteConfigLoader(
 
     private fun getValue(parameter: RemoteConfigParameter): FirebaseRemoteConfigValue {
         val configValue = remoteConfig.getValue(parameter.getKey())
-        Log.i(TAG, "Loaded Firebase Remote Config Parameter. Key [${parameter.getKey()}] | Value [${configValue.asString()}] | Source [${configValue.source}]")
+        val message = "Read Firebase Remote Config Parameter. Key [${parameter.getKey()}] | Value [${configValue.asString()}] | Source [${configValue.source}]"
+        FirebaseCrashlytics.getInstance().log(message)
+        Log.i(TAG, message)
         return configValue
     }
 }

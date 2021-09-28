@@ -2,6 +2,7 @@ import com.dipien.sample.Libs
 
 apply plugin: "com.android.application"
 apply plugin: "kotlin-android"
+apply plugin: "kotlin-kapt"
 
 android {
 	compileSdkVersion = 30
@@ -25,8 +26,10 @@ android {
 }
 
 dependencies {
-	implementation(Libs.FIREBASE_REMOTE_CONFIG_PLUS)
-	implementation(Libs.FIREBASE_MESSAGING_PLUS)
+	implementation(Libs.FIREBASE_PLUS_REMOTE_CONFIG)
+	implementation(Libs.FIREBASE_PLUS_MESSAGING)
+	implementation(Libs.HILT_ANDROID_WORKMANAGER)
+	kapt(Libs.HILT_ANDROID_WORKMANAGER_COMPILER)
 	implementation(Libs.KOTLIN)
 	implementation(Libs.APPCOMPAT)
 }

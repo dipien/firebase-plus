@@ -10,5 +10,5 @@ if (System.getenv("CI") == "true") {
     }
 }
 
-include(":firebase-messaging-plus")
-include(":firebase-remote-config-plus")
+include(":firebase-plus-messaging")
+include(":firebase-plus-remote-config")

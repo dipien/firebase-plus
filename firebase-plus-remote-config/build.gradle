@@ -1,6 +1,6 @@
-ext.PROJECT_NAME = "Firebase Remote Config Plus"
-description = "Firebase Remote Config integration for Android apps"
-ext.ARTIFACT_ID = "firebase-remote-config-plus"
+ext.PROJECT_NAME = "Firebase+ Remote Config"
+description = "Firebase+ Remote Config integration for Android apps"
+ext.ARTIFACT_ID = "firebase-plus-remote-config"
 
 apply plugin: "com.jdroidtools.android.library"
 

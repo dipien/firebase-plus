@@ -1,6 +1,6 @@
-ext.PROJECT_NAME = "Firebase Messaging Plus"
-description = "Firebase Messaging integration for Android apps"
-ext.ARTIFACT_ID = "firebase-messaging-plus"
+ext.PROJECT_NAME = "Firebase+ Messaging"
+description = "Firebase+ Messaging integration for Android apps"
+ext.ARTIFACT_ID = "firebase-plus-messaging"
 
 apply plugin: "com.jdroidtools.android.library"
 
@@ -14,7 +14,7 @@ buildscript {
 dependencies {
 
 	implementation(Libs.FIREBASE_MESSAGING)
-	implementation(project(":firebase-remote-config-plus"))
+	implementation(project(":firebase-plus-remote-config"))
 
 	testImplementation(Libs.JUNIT)
 	testImplementation(Libs.TRUTH)

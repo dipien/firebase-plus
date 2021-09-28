@@ -21,8 +21,11 @@ import java.io.IOException
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
+import javax.inject.Inject
+import javax.inject.Singleton
 
-open class FirebaseRemoteConfigLoader(
+@Singleton
+open class FirebaseRemoteConfigLoader @Inject constructor(
     private val applicationContext: Context,
     private val remoteConfigParameters: Set<@JvmSuppressWildcards RemoteConfigParameter>
 ) : RemoteConfigLoader {

@@ -1,7 +1,7 @@
 package com.dipien.sample
 
+import com.dipien.firebase.remoteconfig.RemoteConfigParameter
 import java.util.Locale
-
 
 enum class SampleRemoteConfigParameter constructor(private val defaultValue: Any) : RemoteConfigParameter {
 

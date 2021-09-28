@@ -41,7 +41,7 @@ class RemoteConfigFetcherWorker constructor(
     override fun doWork(): Result {
         Log.d(TAG, "Executing worker")
         return try {
-            remoteConfigLoader.fetchAndActivate(appContext)
+            remoteConfigLoader.fetchAndActivate()
         } catch (e: Throwable) {
             val result = getResult(e)
             if (result is Result.Failure) {

@@ -82,7 +82,7 @@ open class FirebaseRemoteConfigLoader(
         }
     }
 
-    override fun fetchAndActivate(applicationContext: Context): ListenableWorker.Result {
+    override fun fetchAndActivate(): ListenableWorker.Result {
         try {
             // Block on the task for a maximum of 30 seconds, otherwise time out.
             val task = remoteConfig.fetchAndActivate()

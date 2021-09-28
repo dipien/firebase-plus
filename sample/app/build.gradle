@@ -26,6 +26,7 @@ android {
 
 dependencies {
 	implementation(Libs.FIREBASE_REMOTE_CONFIG_PLUS)
+	implementation(Libs.FIREBASE_MESSAGING_PLUS)
 	implementation(Libs.KOTLIN)
 	implementation(Libs.APPCOMPAT)
 }

@@ -1,4 +1,4 @@
-package com.dipien.firebase.remoteconfig.android
+package com.dipien.firebase.remoteconfig
 
 import android.content.Context
 import android.util.Log
@@ -15,7 +15,7 @@ import java.io.IOException
 class RemoteConfigFetcherWorker constructor(
     private val appContext: Context,
     workerParams: WorkerParameters,
-    private val firebaseRemoteConfigLoader: FirebaseRemoteConfigLoader
+    private val remoteConfigLoader: RemoteConfigLoader
 ) : Worker(appContext, workerParams) {
 
     companion object {
@@ -41,7 +41,7 @@ class RemoteConfigFetcherWorker constructor(
     override fun doWork(): Result {
         Log.d(TAG, "Executing worker")
         return try {
-            firebaseRemoteConfigLoader.fetchAndActivate(appContext)
+            remoteConfigLoader.fetchAndActivate(appContext)
         } catch (e: Throwable) {
             val result = getResult(e)
             if (result is Result.Failure) {

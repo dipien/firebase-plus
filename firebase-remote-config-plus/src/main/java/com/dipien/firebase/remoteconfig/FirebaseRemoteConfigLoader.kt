@@ -1,4 +1,4 @@
-package com.dipien.firebase.remoteconfig.android
+package com.dipien.firebase.remoteconfig
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -94,7 +94,7 @@ open class FirebaseRemoteConfigLoader(
             // Send remote config values as crashlytics custom keys
             val builder = CustomKeysAndValues.Builder()
             remoteConfigParameters.filter { it.trackAsCrashlyticsCustomKey() }.forEach {
-                builder.putString("${CRASHLYTICS_CUSTOM_KEY_PREFIX}${it.getKey()}", getString(it))
+                builder.putString("$CRASHLYTICS_CUSTOM_KEY_PREFIX${it.getKey()}", getString(it))
             }
             FirebaseCrashlytics.getInstance().setCustomKeys(builder.build())
 

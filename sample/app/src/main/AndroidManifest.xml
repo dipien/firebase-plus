@@ -22,10 +22,17 @@
 				tools:node="remove" />
 		</provider>
 
+		<service
+			android:name="com.dipien.sample.SampleFirebaseMessagingService"
+			android:exported="false">
+			<intent-filter>
+				<action android:name="com.google.firebase.MESSAGING_EVENT" />
+			</intent-filter>
+		</service>
+
 		<activity android:name="com.dipien.sample.MainActivity">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
-
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>

@@ -3,8 +3,12 @@ package com.dipien.firebase.messaging
 import com.dipien.firebase.remoteconfig.RemoteConfigLoader
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import javax.inject.Inject
 
-open class FirebaseMessagingService(private val remoteConfigLoader: RemoteConfigLoader) : FirebaseMessagingService() {
+abstract class AbstractFirebaseMessagingService : FirebaseMessagingService() {
+
+    @Inject
+    lateinit var remoteConfigLoader: RemoteConfigLoader
 
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)

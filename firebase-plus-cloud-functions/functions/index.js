@@ -7,7 +7,7 @@ exports.pushConfig = functions.remoteConfig.onUpdate((versionMetadata) => {
   const payload = {
     topic: "REMOTE_CONFIG_PUSH",
     data: {
-      "REMOTE_CONFIG_STATUS": "STALE"
+      "REMOTE_CONFIG_STATUS": "STALE",
     },
     fcm_options: {
       "analytics_label": "REMOTE_CONFIG_PUSH",

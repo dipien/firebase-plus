@@ -1,7 +1,6 @@
 package com.dipien.sample
 
 import android.app.Application
-import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import com.dipien.firebase.remoteconfig.RemoteConfigFetcherWorker
 import dagger.hilt.android.HiltAndroidApp
@@ -11,7 +10,7 @@ import javax.inject.Inject
 class SampleApplication : Application(), Configuration.Provider {
 
     @Inject
-    lateinit var workerFactory: HiltWorkerFactory
+    lateinit var workerFactory: SampleWorkerFactory
 
     override fun getWorkManagerConfiguration() =
             Configuration.Builder()

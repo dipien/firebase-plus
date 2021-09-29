@@ -19,9 +19,7 @@ dependencies {
 	implementation(Libs.FIREBASE_REMOTE_CONFIG)
 	implementation(Libs.WORK_MANAGER_RUNTIME_KTX)
 
-	implementation(Libs.DAGGER)
 	implementation(Libs.HILT_ANDROID)
-	implementation(Libs.HILT_COMMON)
 
 	testImplementation(Libs.JUNIT)
 	testImplementation(Libs.TRUTH)

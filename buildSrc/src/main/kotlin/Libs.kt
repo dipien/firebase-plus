@@ -9,11 +9,7 @@ object Libs {
     const val ANDROIDX_PREFERENCE = "androidx.preference:preference-ktx:1.1.1"
 
     // https://github.com/google/dagger/releases
-    const val DAGGER = "com.google.dagger:dagger:2.38.1"
     const val HILT_ANDROID = "com.google.dagger:hilt-android:2.38.1"
-
-    // https://github.com/google/dagger/releases
-    const val HILT_COMMON = "androidx.hilt:hilt-common:1.0.0"
 
     // https://developer.android.com/jetpack/androidx/releases/work
     const val WORK_MANAGER_RUNTIME_KTX = "androidx.work:work-runtime-ktx:2.6.0"

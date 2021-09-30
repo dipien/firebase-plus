@@ -19,6 +19,7 @@ import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.IOException
+import java.lang.RuntimeException
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
@@ -126,11 +127,7 @@ open class FirebaseRemoteConfigLoader @Inject constructor(
     }
 
     override fun getString(remoteConfigParameter: RemoteConfigParameter): String {
-        val firebaseRemoteConfigValue = getValue(remoteConfigParameter)
-        if (firebaseRemoteConfigValue.source == FirebaseRemoteConfig.VALUE_SOURCE_STATIC) {
-            return remoteConfigParameter.getDefaultValue().toString()
-        }
-        return firebaseRemoteConfigValue.asString()
+        return getValue(remoteConfigParameter).asString()
     }
 
     override fun getStringList(remoteConfigParameter: RemoteConfigParameter): List<String> {
@@ -138,31 +135,27 @@ open class FirebaseRemoteConfigLoader @Inject constructor(
     }
 
     override fun getBoolean(remoteConfigParameter: RemoteConfigParameter): Boolean {
-        val firebaseRemoteConfigValue = getValue(remoteConfigParameter)
-        if (firebaseRemoteConfigValue.source == FirebaseRemoteConfig.VALUE_SOURCE_STATIC) {
-            return remoteConfigParameter.getDefaultValue().toString().toBoolean()
-        }
-        return firebaseRemoteConfigValue.asBoolean()
+        return getValue(remoteConfigParameter).asBoolean()
     }
 
     override fun getLong(remoteConfigParameter: RemoteConfigParameter): Long {
-        val firebaseRemoteConfigValue = getValue(remoteConfigParameter)
-        if (firebaseRemoteConfigValue.source == FirebaseRemoteConfig.VALUE_SOURCE_STATIC) {
-            return remoteConfigParameter.getDefaultValue().toString().toLong()
-        }
-        return firebaseRemoteConfigValue.asLong()
+        return getValue(remoteConfigParameter).asLong()
     }
 
     override fun getDouble(remoteConfigParameter: RemoteConfigParameter): Double {
-        val firebaseRemoteConfigValue = getValue(remoteConfigParameter)
-        if (firebaseRemoteConfigValue.source == FirebaseRemoteConfig.VALUE_SOURCE_STATIC) {
-            return remoteConfigParameter.getDefaultValue().toString().toDouble()
-        }
-        return firebaseRemoteConfigValue.asDouble()
+        return getValue(remoteConfigParameter).asDouble()
     }
 
     private fun getValue(parameter: RemoteConfigParameter): FirebaseRemoteConfigValue {
-        val configValue = remoteConfig.getValue(parameter.getKey())
+        if (!remoteConfigParameters.contains(parameter)) {
+            val message = "The Firebase Remote Config Parameter [${parameter.getKey()}] default value is not registered"
+            Log.e(TAG, message)
+            FirebaseCrashlytics.getInstance().recordException(RuntimeException(message))
+        }
+        var configValue = remoteConfig.getValue(parameter.getKey())
+        if (configValue.source == FirebaseRemoteConfig.VALUE_SOURCE_STATIC) {
+            configValue = StaticFirebaseRemoteConfigValue(parameter)
+        }
         val message = "Read Firebase Remote Config Parameter. Key [${parameter.getKey()}] | Value [${configValue.asString()}] | Source [${configValue.source}]"
         FirebaseCrashlytics.getInstance().log(message)
         Log.i(TAG, message)

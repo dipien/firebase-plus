@@ -156,9 +156,7 @@ open class FirebaseRemoteConfigLoader @Inject constructor(
         if (configValue.source == FirebaseRemoteConfig.VALUE_SOURCE_STATIC) {
             configValue = StaticFirebaseRemoteConfigValue(parameter)
         }
-        val message = "Read Firebase Remote Config Parameter. Key [${parameter.getKey()}] | Value [${configValue.asString()}] | Source [${configValue.source}]"
-        FirebaseCrashlytics.getInstance().log(message)
-        Log.i(TAG, message)
+        Log.i(TAG, "Read Firebase Remote Config Parameter. Key [${parameter.getKey()}] | Value [${configValue.asString()}] | Source [${configValue.source}]")
         return configValue
     }
 }

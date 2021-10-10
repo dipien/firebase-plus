@@ -18,6 +18,9 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfigValue
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.io.IOException
 import java.lang.RuntimeException
 import java.util.concurrent.ExecutionException
@@ -47,6 +50,7 @@ open class FirebaseRemoteConfigLoader @Inject constructor(
         private const val CRASHLYTICS_CUSTOM_KEY_PREFIX = "rc_"
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     private val remoteConfig: FirebaseRemoteConfig by lazy {
         Firebase.remoteConfig.apply {
 
@@ -62,6 +66,10 @@ open class FirebaseRemoteConfigLoader @Inject constructor(
                 defaults[it.getKey()] = it.getDefaultValue()
             }
             setDefaultsAsync(defaults)
+
+            GlobalScope.launch {
+                sendRemoteConfigValuesAsCrashlyticsCustomKeys()
+            }
         }
     }
 
@@ -96,12 +104,9 @@ open class FirebaseRemoteConfigLoader @Inject constructor(
             val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
             sharedPreferences.edit().putBoolean(REMOTE_CONFIG_STALE_STATUS_PREF_KEY, false).apply()
 
-            // Send remote config values as crashlytics custom keys
-            val builder = CustomKeysAndValues.Builder()
-            remoteConfigParameters.filter { it.trackAsCrashlyticsCustomKey() }.forEach {
-                builder.putString("$CRASHLYTICS_CUSTOM_KEY_PREFIX${it.getKey()}", getString(it))
+            if (configParamsUpdated) {
+                sendRemoteConfigValuesAsCrashlyticsCustomKeys()
             }
-            FirebaseCrashlytics.getInstance().setCustomKeys(builder.build())
 
             return ListenableWorker.Result.success()
         } catch (e: ExecutionException) {
@@ -124,6 +129,15 @@ open class FirebaseRemoteConfigLoader @Inject constructor(
             Log.e(TAG, e.message, e)
             return ListenableWorker.Result.retry()
         }
+    }
+
+    private fun sendRemoteConfigValuesAsCrashlyticsCustomKeys() {
+        // Send remote config values as crashlytics custom keys
+        val builder = CustomKeysAndValues.Builder()
+        remoteConfigParameters.filter { it.trackAsCrashlyticsCustomKey() }.forEach {
+            builder.putString("$CRASHLYTICS_CUSTOM_KEY_PREFIX${it.getKey()}", getString(it))
+        }
+        FirebaseCrashlytics.getInstance().setCustomKeys(builder.build())
     }
 
     override fun getString(remoteConfigParameter: RemoteConfigParameter): String {

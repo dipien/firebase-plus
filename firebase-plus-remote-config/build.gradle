@@ -25,3 +25,11 @@ dependencies {
 	testImplementation(Libs.JUNIT)
 	testImplementation(Libs.TRUTH)
 }
+
+android {
+	kotlinOptions {
+		// Remove "-Xopt-in=kotlin.RequiresOptIn" as soon as the opt-in requirement mechanism is stable
+		// https://kotlinlang.org/docs/reference/opt-in-requirements.html
+		freeCompilerArgs += ["-Xopt-in=kotlin.RequiresOptIn"]
+	}
+}

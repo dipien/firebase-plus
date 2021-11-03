@@ -3,7 +3,7 @@ object Libs {
     // https://firebase.google.com/support/release-notes/android
     const val FIREBASE_REMOTE_CONFIG = "com.google.firebase:firebase-config-ktx:21.0.1"
     const val FIREBASE_MESSAGING = "com.google.firebase:firebase-messaging:22.0.0"
-    const val FIREBASE_CRASHLYTICS = "com.google.firebase:firebase-crashlytics:18.2.3"
+    const val FIREBASE_CRASHLYTICS = "com.google.firebase:firebase-crashlytics:18.2.4"
 
     // https://developer.android.com/jetpack/androidx/releases/preference
     const val ANDROIDX_PREFERENCE = "androidx.preference:preference-ktx:1.1.1"

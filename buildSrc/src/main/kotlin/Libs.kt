@@ -13,7 +13,7 @@ object Libs {
     const val HILT_ANDROID_WORKMANAGER = "androidx.hilt:hilt-work:1.0.0"
 
     // https://developer.android.com/jetpack/androidx/releases/work
-    const val WORK_MANAGER_RUNTIME_KTX = "androidx.work:work-runtime-ktx:2.7.0"
+    const val WORK_MANAGER_RUNTIME_KTX = "androidx.work:work-runtime-ktx:2.7.1"
 
     // https://github.com/junit-team/junit4/releases
     const val JUNIT = "junit:junit:4.13.2"

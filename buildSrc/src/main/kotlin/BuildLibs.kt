@@ -1,7 +1,7 @@
 object BuildLibs {
 
     // https://developer.android.com/tools/revisions/gradle-plugin.html
-    const val ANDROID_GRADLE_PLUGIN = "com.android.tools.build:gradle:7.0.2"
+    const val ANDROID_GRADLE_PLUGIN = "com.android.tools.build:gradle:7.0.4"
 
     // https://github.com/maxirosson/jdroid-gradle-plugin/blob/master/CHANGELOG.md
     const val JDROID_GRADLE_ROOT_PLUGIN = "com.jdroidtools:jdroid-gradle-root-plugin:2.5.0-SNAPSHOT"
